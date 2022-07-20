@@ -17,47 +17,11 @@
 #include <signal.h>
 #include "libft/libft.h"
 
-// t_list *g_new;
-
-// void	reciever(int sig, siginfo_t *siginfo, void *context)
-// {
-// 	static int	i;
-// 	static int64_t	c;
-
-// 	(void)context;
-// 	(void)siginfo;
-// 	if (sig == SIGUSR1)
-// 	{
-// 		c = (c << 1) | 1;
-// 	}
-// 	else if (sig == SIGUSR2)
-// 	{
-// 		c = (c << 1) | 0;
-// 	}
-// 	i++;
-// 	if (i == 8)
-// 	{
-// 		if (c == '\0')
-// 		{
-// 			while(g_new)
-// 			{
-// 				ft_putchar_fd((char)g_new->content, 1);
-// 				g_new = g_new->next;
-// 			}
-// 		}
-// 		ft_lstadd_back(&g_new, ft_lstnew((void *)c));
-// 		i = 0;
-// 		c = 0;
-// 	}
-// }
-
-void	reciever(int sig, siginfo_t *siginfo, void *context)
+void	reciever(int sig)
 {
 	static int	i;
 	static char	c;
 
-	(void)context;
-	(void)siginfo;
 	if (sig == SIGUSR1)
 	{
 		c = (c << 1) | 1;
@@ -78,8 +42,6 @@ void	reciever(int sig, siginfo_t *siginfo, void *context)
 int	main(int argc, char **argv)
 {
 	int					pid;
-	struct sigaction	sa1;
-	struct sigaction	sa2;
 
 	(void)argv;
 	if (argc == 1)
@@ -88,14 +50,8 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("PID: ", 1);
 		ft_putnbr_fd(pid, 1);
 		ft_putchar_fd('\n', 1);
-		sa1.sa_flags = SA_SIGINFO;
-		sa1.sa_sigaction = reciever;
-		sigemptyset(&sa1.sa_mask);
-		sa2.sa_flags = SA_SIGINFO;
-		sa2.sa_sigaction = reciever;
-		sigemptyset(&sa2.sa_mask);
-		sigaction(SIGUSR1, &sa1, NULL);
-		sigaction(SIGUSR2, &sa2, NULL);
+		signal(SIGUSR1, reciever);
+		signal(SIGUSR2, reciever);
 		while (1)
 			pause();
 	}
